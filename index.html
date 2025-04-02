@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Login & Subscription Generator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="login">Login System</button>
+            <button class="tab-btn" data-tab="subscription">Subscription System</button>
+        </div>
+        
+        <!-- Login System -->
+        <div class="tab-content active" id="login">
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginTitle">Login Page Title</label>
+                    <input type="text" id="loginTitle" value="User Login" required>
+                    <div class="error-message" id="loginTitleError">Please enter a title</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="loginUsername">Username</label>
+                    <input type="text" id="loginUsername" required>
+                    <div class="error-message" id="loginUsernameError">Please enter a username</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="text" id="loginPassword" required>
+                    <div class="error-message" id="loginPasswordError">Please enter a password</div>
+                </div>
+                
+                <div class="option-group">
+                    <div class="option-label">
+                        <input type="checkbox" id="enableTelegram" checked>
+                        <label for="enableTelegram">Enable Telegram Notifications</label>
+                    </div>
+                </div>
+                
+                <div id="telegramFields">
+                    <div class="form-group">
+                        <label for="botToken">Telegram Bot Token</label>
+                        <input type="text" id="botToken" placeholder="1234567890:ABCdefGhIJKlmNoPQRsTUVwxyZ">
+                        <div class="error-message" id="botTokenError">Please enter a valid bot token</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="adminId">Admin Telegram User ID</label>
+                        <input type="text" id="adminId" placeholder="123456789">
+                        <div class="error-message" id="adminIdError">Please enter a valid user ID</div>
+                    </div>
+                </div>
+                
+                <div class="option-group">
+                    <div class="option-label">
+                        <input type="checkbox" id="hideAfterLogin">
+                        <label for="hideAfterLogin">Hide login page after successful login</label>
+                    </div>
+                </div>
+                
+                <div class="option-group">
+                    <div class="option-label">
+                        <input type="checkbox" id="enableCustomCode">
+                        <label for="enableCustomCode">Add custom HTML code after login</label>
+                    </div>
+                    
+                    <div id="customCodeField" class="hidden">
+                        <div class="form-group">
+                            <label for="customHtml">Custom HTML Code</label>
+                            <textarea id="customHtml" rows="5" placeholder="<h1>Welcome!</h1><p>You have successfully logged in.</p>"></textarea>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="button" class="btn" id="generateLoginBtn">Generate Login Code</button>
+                
+                <div class="code-container" id="loginCodeContainer" style="display: none;">
+                    <label>Generated Login Page Code:</label>
+                    <textarea class="code-textarea" id="loginCode" readonly></textarea>
+                    <button class="btn btn-copy" onclick="copyCode('loginCode')">Copy Code</button>
+                    <button class="btn btn-danger" onclick="downloadCode('loginCode', 'login-page.html')">Download HTML</button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Subscription System -->
+        <div class="tab-content" id="subscription">
+            <form id="subscriptionForm">
+                <div class="form-group">
+                    <label>Subscription Plans</label>
+                    <div class="plan-controls">
+                        <input type="text" id="newPlanName" placeholder="Plan name (e.g., Premium)">
+                        <input type="text" id="newPlanPrice" placeholder="Plan price (e.g., $9.99)">
+                        <button type="button" class="btn" id="addPlanBtn">Add Plan</button>
+                    </div>
+                    <div id="plansList"></div>
+                    <div class="error-message" id="plansError">Please add at least one plan</div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Payment Methods</label>
+                    <div id="paymentMethods">
+                        <div class="payment-method">
+                            <div class="form-group">
+                                <label>Method Name</label>
+                                <input type="text" class="methodName" placeholder="e.g., PayPal" required>
+                                <div class="error-message methodNameError">Please enter method name</div>
+                            </div>
+                            <div class="form-group">
+                                <label>Payment Address</label>
+                                <input type="text" class="methodAddress" placeholder="e.g., paypal.me/yourname" required>
+                                <div class="error-message methodAddressError">Please enter payment address</div>
+                            </div>
+                            <button type="button" class="btn btn-danger" onclick="this.parentElement.remove(); checkPaymentMethods();">Remove Method</button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn" id="addPaymentMethodBtn">Add Payment Method</button>
+                    <div class="error-message" id="paymentMethodsError">Please add at least one payment method</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="subBotToken">Telegram Bot Token</label>
+                    <input type="text" id="subBotToken" placeholder="1234567890:ABCdefGhIJKlmNoPQRsTUVwxyZ" required>
+                    <div class="error-message" id="subBotTokenError">Please enter a valid bot token</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="subAdminId">Admin Telegram User ID</label>
+                    <input type="text" id="subAdminId" placeholder="123456789" required>
+                    <div class="error-message" id="subAdminIdError">Please enter a valid user ID</div>
+                </div>
+                
+                <button type="button" class="btn" id="generateSubscriptionBtn">Generate Subscription Code</button>
+                
+                <div class="code-container" id="subscriptionCodeContainer" style="display: none;">
+                    <label>Generated Subscription Code:</label>
+                    <textarea class="code-textarea" id="subscriptionCode" readonly></textarea>
+                    <button class="btn btn-copy" onclick="copyCode('subscriptionCode')">Copy Code</button>
+                    <button class="btn btn-danger" onclick="downloadCode('subscriptionCode', 'subscription-page.html')">Download HTML</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="script.js"></script>
+</body>
+  </html>
